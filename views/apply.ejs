@@ -1,0 +1,23 @@
+<%- include('header') -%>
+
+<h1> Atvinnuumsókn </h1>
+<form id="application" action="/" method="post">
+  <h3>Nafn:</h3><br>
+  <input type="text" name="name"><br>
+  <h3>Netfang:</h3><br>
+  <input type="email" name="email"><br>
+  <h3>Sími:</h3><br>
+  <input type="text" name="phone"><br>
+  <h3>Kynning á þér:</h3><br>
+  <textarea rows="4" cols="50" name="comment" form="application" placeholder="Verður að vera minst 100 caracter á lengd..."></textarea>
+  <br>
+
+  <h2>Starf sem sótt er um:</h2>
+  <input type="radio" name="jobTitle" value="programer" checked> Forritari<br>
+  <input type="radio" name="jobTitle" value="designer"> Hönnuður<br>
+  <input type="radio" name="jobTitle" value="admin"> Verkefnastjóri<br>
+
+  <input type="submit" value="Senda umsókn">
+</form>
+
+<%- include('footer') -%>

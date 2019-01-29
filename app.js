@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const path = require('path');
 const express = require('express');
+const apply = require('./apply');
 
 const app = express();
 
@@ -10,17 +11,25 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/', apply);
+app.use('/submit', apply);
+
 /* todo aðrar stillingar á express appi */
 
 function notFoundHandler(req, res, next) { // eslint-disable-line
-  res.status(404).render('error', { title: '404', error: '404 fannst ekki' });
+  res.status(404).render('error', {
+    title: '404',
+    error: '404 fannst ekki',
+  });
 }
 
 function errorHandler(error, req, res, next) { // eslint-disable-line
   console.error(error);
-  res.status(500).render('error', { title: 'Villa', error });
+  res.status(500).render('error', {
+    title: 'Villa',
+    error,
+  });
 }
-
 app.use(notFoundHandler);
 app.use(errorHandler);
 
