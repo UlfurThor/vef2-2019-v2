@@ -19,12 +19,21 @@ async function page(req, res) {
 async function submit(req, res) {
   // eslint-disable-next-line no-console
   console.log('--- page> submit');
-
+  console.log(JSON.stringify(req.body));
   // `title` verður aðgengilegt sem breyta í template
   res.render('thanks', {
     title: 'Umsókn',
   });
 }
+
+router.use((req, res, next) => {
+  const chunks = [];
+  req.on('data', chunk => chunks.push(chunk));
+  req.on('end', () => {
+    req.body = chunks.join();
+    next();
+  });
+});
 
 /* todo útfæra */
 router.post('/', catchErrors(submit));
