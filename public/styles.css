@@ -17,3 +17,8 @@ html {
 textarea {
   resize: none;
 }
+
+.error_input {
+  border-color: #855;
+  background-color: #fbb;
+}

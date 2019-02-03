@@ -1,15 +1,18 @@
 <%- include('header') -%>
-
+<% if (typeof data === 'undefined') { data = {} }%>
+<% if (typeof err === 'undefined') { err = {} }%>
 <h1> Atvinnuumsókn </h1>
 <form id="application" action="/" method="post">
   <h3>Nafn:</h3><br>
-  <input type="text" name="name"><br>
+  <input type="text" name="name" value="<%= data.name ? data.name : '' %>" class="<%= err.name ? 'error_input' : '' %>"><br>
   <h3>Netfang:</h3><br>
-  <input type="email" name="email"><br>
+  <input type="text" name="email" value="<%= data.email ? data.email : '' %>" class="<%= err.email ? 'error_input' : '' %>"><br>
   <h3>Sími:</h3><br>
-  <input type="text" name="phone"><br>
+  <input type="text" name="phone" value="<%= data.phone ? data.phone : '' %>" class="<%= err.phone ? 'error_input' : '' %>"><br>
   <h3>Kynning á þér:</h3><br>
-  <textarea rows="4" cols="50" name="comment" form="application" placeholder="Verður að vera minst 100 caracter á lengd..."></textarea>
+
+  <textarea rows="4" cols="50" name="comment" form="application" placeholder="Verður að vera minst 100 caracter á lengd..." class="<%= err.comment ? 'error_input' : '' %>"><%- data.comment %></textarea>
+
   <br>
 
   <h2>Starf sem sótt er um:</h2>
@@ -18,6 +21,17 @@
   <input type="radio" name="jobTitle" value="admin"> Verkefnastjóri<br>
 
   <input type="submit" value="Senda umsókn">
+
+  <% if (typeof err.msgList !== 'undefined') { %>
+  <p>Villur:</p>
+  <ul class="error_list">
+    <li>
+      <%- `${err.msgList.join('</li><li>')}`%>
+    </li>
+  </ul>
+
+  <% }%>
+
 </form>
 
 <%- include('footer') -%>
