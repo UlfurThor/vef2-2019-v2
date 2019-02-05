@@ -3,6 +3,7 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const apply = require('./apply');
+const applications = require('./applications');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', apply);
 app.use('/submit', apply);
+app.use('/applications', applications);
 
 /* todo aðrar stillingar á express appi */
 

@@ -6,6 +6,9 @@ const {
 const {
   sanitize,
 } = require('express-validator/filter');
+const {
+  addApplication,
+} = require('./db');
 
 const router = express.Router();
 
@@ -19,8 +22,7 @@ function catchErrors(fn) {
 }
 
 async function page(req, res) {
-  // eslint-disable-next-line no-console
-  console.log('--- page> index');
+  console.info('--- page> index');
 
   // `title` verður aðgengilegt sem breyta í template
   res.render('apply', {
@@ -29,14 +31,11 @@ async function page(req, res) {
 }
 
 async function submit(req, res) {
-  // eslint-disable-next-line no-console
-  console.log('--- page> submit');
+  console.info('--- page> submit');
   const data = req.body;
 
   // const errors = {};
   const errors = validationResult(req);
-  console.log(errors);
-
   console.log(data);
   if (!errors.isEmpty()) {
     const err = {};
@@ -44,14 +43,18 @@ async function submit(req, res) {
     for (let j = 0; j < errors.array().length; j += 1) {
       err[errors.array()[j].param] = true;
     }
-    console.log(errors.array());
-    console.log(err);
     res.render('apply', {
       title: 'Umsókn',
       err,
       data,
     });
     return;
+  }
+
+  try {
+    addApplication(data);
+  } catch (error) {
+    throw error;
   }
 
 

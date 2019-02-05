@@ -11,12 +11,68 @@
 
 html {
   box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
 }
 
 /* todo útfæra útlit */
 textarea {
-  resize: none;
+  width: 100%;
+  max-width: 500px;
 }
+
+main {
+  margin: 32px;
+}
+
+h1 {
+  font-size: 3rem;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: bold;
+}
+
+label {
+  padding: 8px;
+}
+
+.field_container {
+  max-width: 500px;
+}
+
+.field_container input {
+  padding: 8px;
+  width: 100%;
+}
+
+.field_container .field_block {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+
+@media (min-width: 800px) {
+  .field_container .field_block {
+    flex-direction: row;
+  }
+
+  .field_container label {
+    width: 200px;
+  }
+
+
+}
+
+
+label.jobTitle {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: bold;
+}
+
+h2 {}
+
+h3 {}
 
 .error_input {
   border-color: #855;
