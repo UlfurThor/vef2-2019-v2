@@ -52,30 +52,17 @@ async function getApplications() {
   });
 
   await client.connect();
-
-  const getString = 'SELECT * FROM applications;';
-  client.query(getString)
-    .then((res) => {
-      // console.log(res.rows);
-      client.end();
-      return res.rows;
-    })
-    .catch((err) => {
-      console.error(err);
-      client.end();
-    });
-  // búa til töflu út frá skema
-  /*
+  let res;
+  const getString = 'SELECT * FROM applications ORDER BY id;';
   try {
-
-    data = await query(getString.toString('utf8'));
-    // console.log(data);
-    console.info('applications returned');
-  } catch (e) {
-    console.error('Error returning applications', e.message);
+    res = await client.query(getString);
+  } catch (error) {
+    console.error('error reading table applications');
+    throw new Error('error reading table applications', error); // Express will catch this on its own.
+  } finally {
+    await client.end();
   }
-  return data;
-  */
+  return res.rows;
 }
 
 module.exports = {
@@ -83,8 +70,12 @@ module.exports = {
   getApplications,
 };
 
+
+// eslint-disable-next-line no-unused-vars
 async function test() {
-  const data = getApplications();
+  const data = await getApplications();
+  console.log('test start --------------------------');
   console.log(data);
+  console.log('test end  --------------------------');
 }
-test();
+// test();
