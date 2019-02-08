@@ -16,7 +16,6 @@ app.use('/', apply);
 app.use('/submit', apply);
 app.use('/applications', applications);
 
-/* todo aðrar stillingar á express appi */
 
 function notFoundHandler(req, res, next) { // eslint-disable-line
   res.status(404).render('error', {

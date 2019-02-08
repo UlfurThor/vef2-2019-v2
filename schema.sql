@@ -5,8 +5,8 @@ CREATE TABLE applications (
   email varchar(64) not null,
   phone int not null,
   comment text not null,
-  job varchar(64) not null,
+  jobTitle varchar(64) not null, -- should have a external refrence table for this
   processed boolean DEFAULT false,
-  created timestamp not null default current_timestamp,
-  updated timestamp not null default current_timestamp
+  created timestamp with time zone not null default current_timestamp,
+  updated timestamp with time zone not null default current_timestamp
 );

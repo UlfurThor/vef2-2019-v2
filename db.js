@@ -1,51 +1,50 @@
 require('dotenv').config();
 
-const connectionString = process.env.DATABASE_URL; // sótt úr env gegnum dotenv pakka
+const connectionString = process.env.DATABASE_URL;
 const {
   Client,
 } = require('pg');
 
-async function query(q) {
+/**
+ * Inserts new row into table applications
+ * @param {inserted data} data
+ */
+async function createApplication(data) {
+  console.info(`test db: ${connectionString}`);
   const client = new Client({
     connectionString,
   });
 
+
+  const queryString = `INSERT INTO applications
+  (name, email, phone, comment, jobTitle)
+  VALUES ( $1, $2, $3, $4, $5)`;
+
+  const queryData = [
+    data.name, // $1
+    data.email, // $2
+    data.phone, // $3
+    data.comment, // $4
+    data.jobTitle, // $5
+  ];
+
   await client.connect();
 
   try {
-    const result = await client.query(q);
-    const {
-      rows,
-    } = result;
-    return rows;
+    await client.query(queryString, queryData);
   } catch (err) {
-    throw err;
+    console.error('error sending application', err);
+    // reject(err);
+    throw new Error('error sending application', err);
   } finally {
     await client.end();
   }
 }
 
-
-async function addApplication(data) {
-  console.info(`test db: ${connectionString}`);
-
-  try {
-    const insertString = `INSERT INTO applications (name, email, phone, comment, job)
-    VALUES (
-      '${data.name}',
-      '${data.email}',
-      '${data.phone}',
-      '${data.comment}',
-      '${data.jobTitle}'
-      );`;
-    await query(insertString.toString('utf8'));
-    console.info('application inserted');
-  } catch (e) {
-    console.error('Error inserting application', e.message);
-  }
-}
-
-async function getApplications() {
+/**
+ * Returns the content of table applications, ordered by id
+ */
+async function readApplications() {
   console.info(`test db: ${connectionString}`);
   const client = new Client({
     connectionString,
@@ -56,26 +55,84 @@ async function getApplications() {
   const getString = 'SELECT * FROM applications ORDER BY id;';
   try {
     res = await client.query(getString);
-  } catch (error) {
-    console.error('error reading table applications');
-    throw new Error('error reading table applications', error); // Express will catch this on its own.
+  } catch (err) {
+    console.error('error reading table applications', err);
+    throw new Error('error reading table applications', err);
   } finally {
     await client.end();
   }
   return res.rows;
 }
 
-module.exports = {
-  addApplication,
-  getApplications,
-};
+/**
+   * Sets the selected application to processed,
+   *  and updates the updated timestamp
+   * @param {id key for aplication to be updated} key
+   */
+async function updateApplications(key) {
+  console.info(`test db: ${connectionString}`);
+  const client = new Client({
+    connectionString,
+  });
 
+  const queryString = `UPDATE applications SET
+  processed = true,
+  updated = current_timestamp
+  WHERE id = $1
+  `;
+  const queryData = [key];
+
+  await client.connect();
+
+  try {
+    await client.query(queryString, queryData);
+  } catch (err) {
+    console.error('error updating application', err);
+    throw new Error('error updating application', err);
+  } finally {
+    await client.end();
+  }
+}
+
+/**
+ * Deletes the selected application
+ * @param {id key for aplication to be removed} key
+ */
+async function deleteApplications(key) {
+  console.info(`test db: ${connectionString}`);
+  const client = new Client({
+    connectionString,
+  });
+
+  const queryString = `DELETE FROM applications
+  WHERE id = $1
+  `;
+  const queryData = [key];
+
+  await client.connect();
+
+  try {
+    await client.query(queryString, queryData);
+  } catch (err) {
+    console.error('error deleting application', err);
+    throw new Error('error deleting application', err);
+  } finally {
+    await client.end();
+  }
+}
+
+module.exports = {
+  createApplication,
+  readApplications,
+  updateApplications,
+  deleteApplications,
+};
 
 // eslint-disable-next-line no-unused-vars
 async function test() {
-  const data = await getApplications();
-  console.log('test start --------------------------');
-  console.log(data);
-  console.log('test end  --------------------------');
+  const data = await readApplications();
+  console.info('test start --------------------------');
+  console.info(data);
+  console.info('test end  --------------------------');
 }
-// test();
+// test();  // used to test reading the database, red evry time the page is saved

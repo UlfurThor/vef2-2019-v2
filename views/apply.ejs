@@ -27,24 +27,24 @@
     </div>
 
   </div>
-  <div class="Radio_container">
+  <div class="radio_container <%= err.jobTitle ? 'error_input_radio' : '' %>">
     <label for="jobTitle" class="jobTitle">Starf sem sótt er um:</label><br>
-    <input type="radio" name="jobTitle" value="programer" checked> Forritari<br>
-    <input type="radio" name="jobTitle" value="designer"> Hönnuður<br>
-    <input type="radio" name="jobTitle" value="admin"> Verkefnastjóri<br>
+    <div class="radio_block"><input type="radio" name="jobTitle" value="programer"> <span class=""> Forritari </span></div>
+    <div class="radio_block"><input type="radio" name="jobTitle" value="designer"> <span class="">Hönnuður</span></div>
+    <div class="radio_block"><input type="radio" name="jobTitle" value="admin"> <span class="">Verkefnastjóri</span></div>
   </div>
-  <input type="submit" value="Senda umsókn">
 
   <% if (typeof err.msgList !== 'undefined') { %>
-  <p>Villur:</p>
-  <ul class="error_list">
-    <li>
-      <%- `${err.msgList.join('</li><li>')}`%>
-    </li>
-  </ul>
+    <h2>Vandræði við að senda umsókn:</h2>
+    <ul class="error_list">
+      <li>
+        <%- `${err.msgList.join('</li><li>')}`%>
+      </li>
+    </ul>
 
-  <% }%>
+    <% }%>
 
+  <button>Senda umsókn </button>
 </form>
 
 <%- include('footer') -%>

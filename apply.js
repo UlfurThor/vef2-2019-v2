@@ -6,8 +6,9 @@ const {
 const {
   sanitize,
 } = require('express-validator/filter');
+const xss = require('xss');
 const {
-  addApplication,
+  createApplication,
 } = require('./db');
 
 const router = express.Router();
@@ -21,6 +22,12 @@ function catchErrors(fn) {
   return (req, res, next) => fn(req, res, next).catch(next);
 }
 
+// ------------------------------------------------------------------------------------------
+/**
+ * Genarates application page
+ * @param {*} req
+ * @param {*} res
+ */
 async function page(req, res) {
   console.info('--- page> index');
 
@@ -30,48 +37,52 @@ async function page(req, res) {
   });
 }
 
+// ------------------------------------------------------------------------------------------
+/**
+ * Gets application, evaluates it, and returns either error page,
+ *     or uploads it and returns thank you page
+ * @param {*} req
+ * @param {*} res
+ */
 async function submit(req, res) {
   console.info('--- page> submit');
   const data = req.body;
 
-  // const errors = {};
   const errors = validationResult(req);
-  console.log(data);
+  // console.log(data);
   if (!errors.isEmpty()) {
     const err = {};
     err.msgList = errors.array().map(i => i.msg);
     for (let j = 0; j < errors.array().length; j += 1) {
       err[errors.array()[j].param] = true;
     }
+    const safeData = data;
+    safeData.name = xss(data.name);
+    safeData.email = xss(data.email);
+    safeData.phone = xss(data.phone);
+    safeData.comment = xss(data.comment);
+    safeData.jobTitle = xss(data.jobTitle);
+
     res.render('apply', {
       title: 'Umsókn',
       err,
-      data,
+      data: safeData,
     });
     return;
   }
-
   try {
-    addApplication(data);
-  } catch (error) {
-    throw error;
+    await createApplication(data);
+  } catch (err) {
+    throw new Error(err);
   }
-
-
   res.render('thanks', {
-    title: 'Umsókn',
+    title: 'Þakkir',
   });
 }
 
-
-/* todo fix formating */
 router.post('/',
-  check('name').isLength({
-    min: 1,
-  }).withMessage('Name must not be empty'),
-  check('email').isLength({
-    min: 1,
-  }).withMessage('Email must not be empty'),
+  check('name').isLength({ min: 1 }).withMessage('Name must not be empty'),
+  check('email').isLength({ min: 1 }).withMessage('Email must not be empty'),
   check('email').isEmail().withMessage('Email must be formated as an email'),
   check('phone').isLength({
     min: 1,
@@ -79,9 +90,7 @@ router.post('/',
   check('phone')
     .matches(/^([0-9]){3}[- ]?([0-9]){4}$/)
     .withMessage('Phone number must be 7 characters long (posible dash after 3rd char)'),
-  check('comment').isLength({
-    min: 100,
-  }).withMessage('Comment must be at least 100 character long'),
+  check('comment').isLength({ min: 100 }).withMessage('Comment must be at least 100 character long'),
   check('jobTitle').isIn(['programer', 'designer', 'admin']).withMessage('Job title not valid'),
 
   sanitize('name').trim().escape(),
@@ -89,10 +98,8 @@ router.post('/',
   sanitize('phone').blacklist('- ').toInt(),
   sanitize('comment').trim().escape(),
   sanitize('jobTitle').trim().escape(),
-
-
   catchErrors(submit));
+
 router.get('/', catchErrors(page));
-// router.get('/thanks',)
 
 module.exports = router;

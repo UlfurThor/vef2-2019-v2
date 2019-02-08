@@ -15,9 +15,9 @@ html {
   overflow-y: scroll;
   font-family: 'Open Sans', sans-serif;
   font-size: 16px;
-}
 
-/* todo útfæra útlit */
+  max-width: 1000px;
+}
 
 main {
   margin: 32px;
@@ -31,10 +31,6 @@ h1 {
 
 label {
   padding: 8px;
-}
-
-.field_container {
-  max-width: 500px;
 }
 
 .field_container input {
@@ -56,6 +52,10 @@ label {
 }
 
 @media (min-width: 800px) {
+  .field_container {
+    max-width: 80%;
+  }
+
   .field_container .field_block {
     flex-direction: row;
   }
@@ -73,11 +73,51 @@ label.jobTitle {
   font-weight: bold;
 }
 
-h2 {}
-
-h3 {}
+h2 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: bold;
+  size: 1em;
+}
 
 .error_input {
   border-color: #855;
   background-color: #fbb;
+}
+
+.error_input_radio .radio_block {
+  border-color: #855;
+  background-color: #fbb;
+  padding: 8px;
+  margin: 8px;
+}
+
+
+button {
+  padding: 8px;
+  margin: 8px;
+  background: white;
+}
+
+.error_list li {
+  margin: 8px;
+}
+
+p.comment {
+  padding: 8px;
+
+  transition: background-color 300ms ease-in;
+}
+
+p.comment:hover {
+  background-color: #bbb;
+}
+
+.button_flex{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.content{
+  margin-top: 32px;
 }
